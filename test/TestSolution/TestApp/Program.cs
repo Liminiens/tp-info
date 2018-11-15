@@ -13,5 +13,7 @@ namespace TestApp
                 Console.WriteLine(todo.Title);
             }
         }
+
+        static void add() {};
     }
 }

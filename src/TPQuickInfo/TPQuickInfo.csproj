@@ -53,6 +53,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeProviderQuickInfoController.cs" />
+    <Compile Include="TypeProviderQuickInfoControllerProvider.cs" />
     <Compile Include="TypeProviderQuickInfoSourceProvider.cs" />
     <Compile Include="TypeProviderQuickInfoSource.cs" />
   </ItemGroup>
