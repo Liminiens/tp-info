@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TPQuickInfo
 {
@@ -17,22 +15,12 @@ namespace TPQuickInfo
     {
         private bool _isDisposed;
         private readonly TypeProviderQuickInfoSourceProvider _provider;
-        private readonly ITextBuffer _subjectBuffer;
-        private readonly Dictionary<string, string> _descriptions;
+        private readonly ITextBuffer _textBuffer;
 
-        public TypeProviderQuickInfoSource(TypeProviderQuickInfoSourceProvider provider, ITextBuffer subjectBuffer)
+        public TypeProviderQuickInfoSource(TypeProviderQuickInfoSourceProvider provider, ITextBuffer textBuffer)
         {
             _provider = provider;
-            _subjectBuffer = subjectBuffer;
-
-            //these are the method names and their descriptions
-            _descriptions = new Dictionary<string, string>
-            {
-                {"add", "int add(int firstInt, int secondInt)\nAdds one integer to another."},
-                {"subtract", "int subtract(int firstInt, int secondInt)\nSubtracts one integer from another."},
-                {"multiply", "int multiply(int firstInt, int secondInt)\nMultiplies one integer by another."},
-                {"divide", "int divide(int firstInt, int secondInt)\nDivides one integer by another."}
-            };
+            _textBuffer = textBuffer;
         }
 
         public void Dispose()
@@ -44,42 +32,53 @@ namespace TPQuickInfo
             }
         }
 
-        public Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
+        public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
         {
             // Map the trigger point down to our buffer.
-            SnapshotPoint? subjectTriggerPoint = session.GetTriggerPoint(_subjectBuffer.CurrentSnapshot);
+            SnapshotPoint? subjectTriggerPoint = session.GetTriggerPoint(_textBuffer.CurrentSnapshot);
             if (!subjectTriggerPoint.HasValue)
             {
                 return null;
             }
 
+            var document = _textBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
             ITextSnapshot currentSnapshot = subjectTriggerPoint.Value.Snapshot;
-            SnapshotSpan querySpan = new SnapshotSpan(subjectTriggerPoint.Value, 0);
-
-            //look for occurrences of our QuickInfo words in the span
-            ITextStructureNavigator navigator = _provider.NavigatorService.GetTextStructureNavigator(_subjectBuffer);
+            ITextStructureNavigator navigator = _provider.NavigatorService.GetTextStructureNavigator(_textBuffer);
             TextExtent extent = navigator.GetExtentOfWord(subjectTriggerPoint.Value);
-            string searchText = extent.Span.GetText();
 
-            foreach (string key in _descriptions.Keys)
+            var node = root.FindNode(TextSpan.FromBounds(extent.Span.Start, extent.Span.End));
+            var symbolInfo = semanticModel.GetSymbolInfo(node, cancellationToken);
+            var docAttribute =
+                symbolInfo.Symbol
+                    .GetAttributes()
+                    .FirstOrDefault(x => x.AttributeClass.Name == "TypeProviderXmlDocAttribute");
+            if (docAttribute != null)
             {
-                int foundIndex = searchText.IndexOf(key, StringComparison.CurrentCultureIgnoreCase);
-                if (foundIndex > -1)
+                var summaryRegex = new Regex(@"<summary>(?<text>.*)</summary>", RegexOptions.Compiled);
+                var documentation = docAttribute.ConstructorArguments.FirstOrDefault().Value.ToString();
+                if (!String.IsNullOrEmpty(documentation))
                 {
-                    var applicableToSpan = currentSnapshot.CreateTrackingSpan
-                    (
-                        //querySpan.Start.Add(foundIndex).Position, 9, SpanTrackingMode.EdgeInclusive
-                        extent.Span.Start + foundIndex, key.Length, SpanTrackingMode.EdgeInclusive
-                    );
-                    _descriptions.TryGetValue(key, out var value);
-                    if (value != null)
+                    var match = summaryRegex.Match(documentation);
+                    if (match.Success)
                     {
-                        return Task.FromResult(new QuickInfoItem(applicableToSpan, value));
+                        documentation = match.Groups["text"].Value;
+                        if (!String.IsNullOrEmpty(documentation))
+                        {
+                            return CreateSpan();
+                        }
                     }
-                    else
+                    return CreateSpan();
+                    QuickInfoItem CreateSpan()
                     {
-                        return Task.FromResult(new QuickInfoItem(applicableToSpan, String.Empty));
-                    }
+                        var applicableToSpan = currentSnapshot.CreateTrackingSpan
+                        (
+                            node.Span.Start, 1, SpanTrackingMode.EdgeInclusive
+                        );
+                        return new QuickInfoItem(applicableToSpan, documentation);
+                    };
                 }
             }
             return null;

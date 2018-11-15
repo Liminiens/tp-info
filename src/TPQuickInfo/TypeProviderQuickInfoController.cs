@@ -8,8 +8,8 @@ namespace TPQuickInfo
     internal class TypeProviderQuickInfoController : IIntellisenseController
     {
         private ITextView _textView;
-        private IList<ITextBuffer> _subjectBuffers;
-        private TypeProviderQuickInfoControllerProvider _provider;
+        private readonly IList<ITextBuffer> _subjectBuffers;
+        private readonly TypeProviderQuickInfoControllerProvider _provider;
         private IAsyncQuickInfoSession _session;
         internal TypeProviderQuickInfoController(
             ITextView textView,
