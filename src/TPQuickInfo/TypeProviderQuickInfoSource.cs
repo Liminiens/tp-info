@@ -50,7 +50,7 @@ namespace TPQuickInfo
             SnapshotPoint? subjectTriggerPoint = session.GetTriggerPoint(_subjectBuffer.CurrentSnapshot);
             if (!subjectTriggerPoint.HasValue)
             {
-                return Task.FromResult<QuickInfoItem>(null);
+                return null;
             }
 
             ITextSnapshot currentSnapshot = subjectTriggerPoint.Value.Snapshot;
@@ -82,7 +82,7 @@ namespace TPQuickInfo
                     }
                 }
             }
-            return Task.FromResult<QuickInfoItem>(null);
+            return null;
         }
     }
 }
