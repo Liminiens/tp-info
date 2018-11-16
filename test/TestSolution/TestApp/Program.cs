@@ -11,7 +11,11 @@ namespace TestApp
             foreach (ProvidedType.Root todo in data)
             {
                 Console.WriteLine(todo.Title);
+                Add();
             }
         }
+
+        private static int Value { get; set; }
+        static void Add() { }
     }
 }

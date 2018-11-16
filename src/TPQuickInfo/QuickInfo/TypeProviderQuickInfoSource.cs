@@ -1,13 +1,15 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using TPQuickInfo.Documentation;
+using TPQuickInfo.Utility;
 
-namespace TPQuickInfo
+namespace TPQuickInfo.QuickInfo
 {
     internal class TypeProviderQuickInfoSource : IAsyncQuickInfoSource
     {
@@ -43,15 +45,18 @@ namespace TPQuickInfo
 
             var node = root.FindNode(TextSpan.FromBounds(extent.Span.Start, extent.Span.End));
             var symbolInfo = semanticModel.GetSymbolInfo(node, cancellationToken);
-            var attributeReader = new TypeProviderXmlDocAttributeReader();
-            var documentation = attributeReader.GetValue(symbolInfo);
-            if (!String.IsNullOrEmpty(documentation))
+            if (symbolInfo.IsProvidedType())
             {
-                var applicableToSpan = currentSnapshot.CreateTrackingSpan
-                (
-                    node.Span.Start, 1, SpanTrackingMode.EdgeInclusive
-                );
-                return new QuickInfoItem(applicableToSpan, documentation);
+                var attributeReader = new TypeProviderXmlDocAttributeReader(symbolInfo);
+                var documentation = attributeReader.GetDocumentation();
+                if (!String.IsNullOrEmpty(documentation.SummaryText))
+                {
+                    var applicableToSpan = currentSnapshot.CreateTrackingSpan
+                    (
+                        node.Span.Start, 1, SpanTrackingMode.EdgeInclusive
+                    );
+                    return new QuickInfoItem(applicableToSpan, documentation.SummaryText);
+                }
             }
             return null;
         }

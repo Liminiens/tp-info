@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.Language.Intellisense;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using System.Collections.Generic;
 
-namespace TPQuickInfo
+namespace TPQuickInfo.QuickInfo
 {
     internal class TypeProviderQuickInfoController : IIntellisenseController
     {
@@ -11,6 +11,7 @@ namespace TPQuickInfo
         private readonly IList<ITextBuffer> _subjectBuffers;
         private readonly TypeProviderQuickInfoControllerProvider _provider;
         private IAsyncQuickInfoSession _session;
+
         internal TypeProviderQuickInfoController(
             ITextView textView,
             IList<ITextBuffer> subjectBuffers,
