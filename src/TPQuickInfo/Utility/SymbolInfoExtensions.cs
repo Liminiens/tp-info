@@ -8,9 +8,14 @@ namespace TPQuickInfo.Utility
     {
         public static bool IsProvidedType(this SymbolInfo symbolInfo)
         {
-            return symbolInfo.Symbol
+            if (symbolInfo.Symbol != null)
+            {
+                return symbolInfo.Symbol
                     .GetAttributes()
                     .Any(x => x.AttributeClass.Name == TypeProviderXmlDocAttributeReader.AttributeName);
+            }
+
+            return false;
         }
     }
 }
