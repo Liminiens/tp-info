@@ -10,18 +10,25 @@ namespace TPQuickInfo.SignatureHelp
         private readonly ITextBuffer _textBuffer;
         private IParameter _currentParameter;
 
-        internal TypeProviderSignature(ITextBuffer subjectBuffer, string content, string doc, ReadOnlyCollection<IParameter> parameters)
+        internal TypeProviderSignature(
+            ITextBuffer subjectBuffer, 
+            string content, 
+            string doc,
+            ReadOnlyCollection<IParameter> parameters)
         {
             _textBuffer = subjectBuffer;
             Content = content;
             Documentation = doc;
             Parameters = parameters;
+
             _textBuffer.Changed += OnSubjectBufferChanged;
         }
 
         private void RaiseCurrentParameterChanged(IParameter prevCurrentParameter, IParameter newCurrentParameter)
         {
-            CurrentParameterChanged?.Invoke(this, new CurrentParameterChangedEventArgs(prevCurrentParameter, newCurrentParameter));
+            CurrentParameterChanged?.Invoke(
+                this, 
+                new CurrentParameterChangedEventArgs(prevCurrentParameter, newCurrentParameter));
         }
 
         public void ComputeCurrentParameter()

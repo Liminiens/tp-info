@@ -3,9 +3,9 @@ using Microsoft.VisualStudio.Text;
 
 namespace TPQuickInfo.SignatureHelp
 {
-    internal class TypeProviderParameter : IParameter
+    internal class Parameter : IParameter
     {
-        public TypeProviderParameter(string documentation, Span locus, string name, ISignature signature)
+        public Parameter(string documentation, Span locus, string name, ISignature signature)
         {
             Documentation = documentation;
             Locus = locus;

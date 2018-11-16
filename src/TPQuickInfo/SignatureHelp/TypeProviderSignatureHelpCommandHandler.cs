@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System;
 using System.Runtime.InteropServices;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TPQuickInfo.Documentation;
 using TPQuickInfo.Utility;
 using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;

@@ -51,11 +51,11 @@ namespace TPQuickInfo.SignatureHelp
                     paramList.Add(new TypeProviderParameter("Documentation for the parameter.", locus, param, sig));
                 }
             }
-            //Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHelp.Presentation.Signature
+
             sig.Parameters = new ReadOnlyCollection<IParameter>(paramList);
             sig.ApplicableToSpan = span;
             sig.ComputeCurrentParameter();
-            return sig; //Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.SignatureHelp.Presentation.Signature
+            return sig;
         }
 
         /// <inheritdoc />
@@ -93,13 +93,7 @@ namespace TPQuickInfo.SignatureHelp
         {
             if (session.Signatures.Count > 0)
             {
-                ITrackingSpan applicableToSpan = session.Signatures[0].ApplicableToSpan;
-                string text = applicableToSpan.GetText(applicableToSpan.TextBuffer.CurrentSnapshot);
-
-                if (text.Trim().Equals("add")) //get only "add"
-                {
-                    return session.Signatures[0];
-                }
+                return session.SelectedSignature;
             }
             return null;
         }

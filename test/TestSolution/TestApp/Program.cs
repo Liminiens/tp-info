@@ -11,7 +11,7 @@ namespace TestApp
             foreach (ProvidedType.Root todo in data)
             {
                 Console.WriteLine(todo.Title);
-                Add();
+                Add
             }
         }
 
