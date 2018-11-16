@@ -4,8 +4,6 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +11,6 @@ namespace TPQuickInfo
 {
     internal class TypeProviderQuickInfoSource : IAsyncQuickInfoSource
     {
-        private bool _isDisposed;
         private readonly TypeProviderQuickInfoSourceProvider _provider;
         private readonly ITextBuffer _textBuffer;
 
@@ -25,11 +22,6 @@ namespace TPQuickInfo
 
         public void Dispose()
         {
-            if (!_isDisposed)
-            {
-                GC.SuppressFinalize(this);
-                _isDisposed = true;
-            }
         }
 
         public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
@@ -51,35 +43,15 @@ namespace TPQuickInfo
 
             var node = root.FindNode(TextSpan.FromBounds(extent.Span.Start, extent.Span.End));
             var symbolInfo = semanticModel.GetSymbolInfo(node, cancellationToken);
-            var docAttribute =
-                symbolInfo.Symbol
-                    .GetAttributes()
-                    .FirstOrDefault(x => x.AttributeClass.Name == "TypeProviderXmlDocAttribute");
-            if (docAttribute != null)
+            var attributeReader = new TypeProviderXmlDocAttributeReader();
+            var documentation = attributeReader.GetValue(symbolInfo);
+            if (!String.IsNullOrEmpty(documentation))
             {
-                var summaryRegex = new Regex(@"<summary>(?<text>.*)</summary>", RegexOptions.Compiled);
-                var documentation = docAttribute.ConstructorArguments.FirstOrDefault().Value.ToString();
-                if (!String.IsNullOrEmpty(documentation))
-                {
-                    var match = summaryRegex.Match(documentation);
-                    if (match.Success)
-                    {
-                        documentation = match.Groups["text"].Value;
-                        if (!String.IsNullOrEmpty(documentation))
-                        {
-                            return CreateSpan();
-                        }
-                    }
-                    return CreateSpan();
-                    QuickInfoItem CreateSpan()
-                    {
-                        var applicableToSpan = currentSnapshot.CreateTrackingSpan
-                        (
-                            node.Span.Start, 1, SpanTrackingMode.EdgeInclusive
-                        );
-                        return new QuickInfoItem(applicableToSpan, documentation);
-                    };
-                }
+                var applicableToSpan = currentSnapshot.CreateTrackingSpan
+                (
+                    node.Span.Start, 1, SpanTrackingMode.EdgeInclusive
+                );
+                return new QuickInfoItem(applicableToSpan, documentation);
             }
             return null;
         }
