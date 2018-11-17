@@ -10,7 +10,8 @@ namespace TPQuickInfo.QuickInfo
 {
     [Export(typeof(IIntellisenseControllerProvider))]
     [Name("Type Provider QuickInfo Controller Provider")]
-    [ContentType(PredefinedNames.RoslynLanguages)]
+    [ContentType(PredefinedNames.CSharpContentType)]
+    [ContentType(PredefinedNames.VisualBasicContentType)]
     internal class TypeProviderQuickInfoControllerProvider : IIntellisenseControllerProvider
     {
         [Import]

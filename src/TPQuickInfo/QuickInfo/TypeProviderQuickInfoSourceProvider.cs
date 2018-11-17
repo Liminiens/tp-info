@@ -10,7 +10,8 @@ namespace TPQuickInfo.QuickInfo
     [Export(typeof(IAsyncQuickInfoSourceProvider))]
     [Name("Type Provider QuickInfo Source")]
     [Order(Before = "Default Quick Info Presenter")]
-    [ContentType(PredefinedNames.RoslynLanguages)]
+    [ContentType(PredefinedNames.CSharpContentType)]
+    [ContentType(PredefinedNames.VisualBasicContentType)]
     internal class TypeProviderQuickInfoSourceProvider : IAsyncQuickInfoSourceProvider
     {
         [Import]
