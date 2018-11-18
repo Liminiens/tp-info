@@ -12,6 +12,7 @@ namespace TPQuickInfo.Documentation
         private DocumentationComment _documentationComment;
 
         private static readonly Regex SummaryRegex = new Regex(@"<summary>(?<text>.*)</summary>", RegexOptions.Compiled);
+
         public const string AttributeName = "TypeProviderXmlDocAttribute";
 
         public TypeProviderXmlDocAttributeReader(SymbolInfo symbolInfo)
@@ -27,7 +28,7 @@ namespace TPQuickInfo.Documentation
                     _symbolInfo.Symbol
                         .GetAttributes()
                         .FirstOrDefault(x => x.AttributeClass.Name == AttributeName);
-                if (docAttribute != null)
+                if (docAttribute != null && docAttribute.ConstructorArguments.Length > 0)
                 {
                     var documentation = docAttribute.ConstructorArguments.FirstOrDefault().Value.ToString();
                     if (!String.IsNullOrEmpty(documentation))
@@ -41,6 +42,10 @@ namespace TPQuickInfo.Documentation
                         {
                             _documentationComment = new DocumentationComment() { SummaryText = documentation };
                         }
+                    }
+                    else
+                    {
+                        _documentationComment = new DocumentationComment() { SummaryText = String.Empty };
                     }
                 }
             }
