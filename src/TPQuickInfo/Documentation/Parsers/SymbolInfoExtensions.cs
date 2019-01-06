@@ -1,8 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Linq;
-using TPQuickInfo.Documentation;
+﻿using System.Linq;
+using Microsoft.CodeAnalysis;
 
-namespace TPQuickInfo.Utility
+namespace TPQuickInfo.Documentation.Parsers
 {
     public static class SymbolInfoExtensions
     {

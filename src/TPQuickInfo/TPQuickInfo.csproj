@@ -53,17 +53,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Utility\SymbolInfoExtensions.cs" />
-    <Compile Include="Utility\DocumentationComment.cs" />
+    <Compile Include="Documentation\Parsers\SymbolInfoExtensions.cs" />
+    <Compile Include="Documentation\Parsers\DocumentationComment.cs" />
     <Compile Include="Documentation\TypeProviderXmlDocAttributeReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickInfo\TypeProviderQuickInfoController.cs" />
     <Compile Include="QuickInfo\TypeProviderQuickInfoControllerProvider.cs" />
     <Compile Include="QuickInfo\TypeProviderQuickInfoSourceProvider.cs" />
     <Compile Include="QuickInfo\TypeProviderQuickInfoSource.cs" />
-    <Compile Include="Utility\DocumentationCommentXmlNames.cs" />
-    <Compile Include="Utility\PredefinedNames.cs" />
-    <Compile Include="Utility\XmlFragmentParser.cs" />
+    <Compile Include="Documentation\Parsers\DocumentationCommentXmlNames.cs" />
+    <Compile Include="Documentation\Parsers\PredefinedNames.cs" />
+    <Compile Include="Documentation\Parsers\XmlFragmentParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

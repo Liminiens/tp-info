@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Xml;
-using XmlNames = TPQuickInfo.Utility.DocumentationCommentXmlNames;
+using XmlNames = TPQuickInfo.Documentation.Parsers.DocumentationCommentXmlNames;
 
 /*
  * From:
  * https://github.com/dotnet/roslyn/blob/fab7134296816fc80019c60b0f5bef7400cf23ea/src/Workspaces/Core/Portable/Shared/Utilities/DocumentationComment.cs
  */
 
-namespace TPQuickInfo.Utility
+namespace TPQuickInfo.Documentation.Parsers
 {
     /// <summary>
     /// A documentation comment derived from either source text or metadata.

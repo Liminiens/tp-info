@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TPQuickInfo.Utility
+namespace TPQuickInfo.Documentation.Parsers
 {
     /// <summary>
     /// Names of well-known XML attributes and elements.

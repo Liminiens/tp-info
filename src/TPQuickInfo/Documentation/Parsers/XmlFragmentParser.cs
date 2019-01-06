@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
-namespace TPQuickInfo.Utility
+namespace TPQuickInfo.Documentation.Parsers
 {
     /// <summary>
     /// An XML parser that is designed to parse small fragments of XML such as those that appear in documentation comments.

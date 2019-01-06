@@ -1,4 +1,4 @@
-﻿namespace TPQuickInfo.Utility
+﻿namespace TPQuickInfo.Documentation.Parsers
 {
     internal static class PredefinedNames
     {

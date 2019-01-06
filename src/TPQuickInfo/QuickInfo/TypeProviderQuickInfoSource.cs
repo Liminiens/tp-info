@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
 using TPQuickInfo.Documentation;
-using TPQuickInfo.Utility;
+using TPQuickInfo.Documentation.Parsers;
 
 namespace TPQuickInfo.QuickInfo
 {
